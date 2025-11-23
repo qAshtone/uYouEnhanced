@@ -191,7 +191,6 @@ static NSString *const kGoogleSigninFix = @"googleSigninFix_enabled";
 // Disable Snap to chapter
 @interface YTSegmentableInlinePlayerBarView : UIView
 @property(nonatomic, assign) BOOL enableSnapToChapter;
-- (BOOL)isVideoModeLive;
 @end
 
 // Hide Double tap to seek Overlay
