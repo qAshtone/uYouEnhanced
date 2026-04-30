@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
 
       - name: Set up Git
         run: |
@@ -42,13 +45,9 @@ jobs:
           git add .
           git submodule update --init --recursive --remote Tweaks/YouQuality
           git add .
-          git submodule update --init --recursive --remote Tweaks/YouSlider
-          git add .
           git submodule update --init --recursive --remote Tweaks/YouSpeed
           git add .
           git submodule update --init --recursive --remote Tweaks/YouTimeStamp
-          git add .
-          git submodule update --init --recursive --remote Tweaks/YouTubeHeader
           git add .
           git submodule update --init --recursive --remote Tweaks/YTABConfig
           git add .
@@ -64,10 +63,17 @@ jobs:
           git add .
           git submodule update --init --recursive --remote Tweaks/YTweaks
           git add .
+          # Keep these pinned unless you update them together and verify build:
+          # - Tweaks/YouTubeHeader
+          # - Tweaks/YouSlider
           git submodule update --init --recursive
+          if ! find Tweaks/YouTubeHeader -name 'YTPlayerBarProgressDecorationView.h' -print -quit | grep -q .; then
+            echo "Missing YTPlayerBarProgressDecorationView.h after submodule updates."
+            echo "You likely updated YouTubeHeader/YouSlider to an incompatible revision."
+            exit 1
+          fi
           git commit -m "updated submodules"
           git push
-        continue-on-error: true
 
       - name: Check exit code
         run: |
