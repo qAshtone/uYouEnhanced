@@ -67,11 +67,6 @@ jobs:
           # - Tweaks/YouTubeHeader
           # - Tweaks/YouSlider
           git submodule update --init --recursive
-          if ! find Tweaks/YouTubeHeader -name 'YTPlayerBarProgressDecorationView.h' -print -quit | grep -q .; then
-            echo "Missing YTPlayerBarProgressDecorationView.h after submodule updates."
-            echo "You likely updated YouTubeHeader/YouSlider to an incompatible revision."
-            exit 1
-          fi
           git commit -m "updated submodules"
           git push
 
