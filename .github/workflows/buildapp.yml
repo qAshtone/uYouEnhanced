@@ -66,6 +66,29 @@ jobs:
           ref: ${{ github.event.inputs.commit_id || github.ref }}
           submodules: recursive
 
+      - name: Patch YouSlider header import (compat)
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("main/Tweaks/YouSlider/Tweak.x")
+          if not p.exists():
+              raise SystemExit(0)
+          s = p.read_text(encoding="utf-8", errors="ignore")
+          target = "#import <YouTubeHeader/YTPlayerBarProgressDecorationView.h>"
+          if target not in s:
+              raise SystemExit(0)
+          replacement = "\n".join([
+              "#import <UIKit/UIKit.h>",
+              "",
+              "@interface YTPlayerBarProgressDecorationView : UIView",
+              "@end",
+              "",
+          ])
+          s2 = s.replace(target, replacement, 1)
+          p.write_text(s2, encoding="utf-8")
+          print("Patched YouSlider to avoid missing YouTubeHeader import.")
+          PY
+
       - name: Install Dependencies
         run: brew install ldid dpkg make
 
