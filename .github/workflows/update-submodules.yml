@@ -3,6 +3,9 @@ name: Update Submodules
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-submodules:
     runs-on: ubuntu-latest
@@ -28,8 +31,10 @@ jobs:
           git submodule update --init --recursive --remote Tweaks/YouMute
           git submodule update --init --recursive --remote Tweaks/YouPiP
           git submodule update --init --recursive --remote Tweaks/YouQuality
+          git submodule update --init --recursive --remote Tweaks/YouSlider
           git submodule update --init --recursive --remote Tweaks/YouSpeed
           git submodule update --init --recursive --remote Tweaks/YouTimeStamp
+          git submodule update --init --recursive --remote Tweaks/YouTubeHeader
           git submodule update --init --recursive --remote Tweaks/YTABConfig
           git submodule update --init --recursive --remote Tweaks/YTClassicVideoQuality
           git submodule update --init --recursive --remote Tweaks/YTHoldForSpeed
@@ -37,11 +42,22 @@ jobs:
           git submodule update --init --recursive --remote Tweaks/YTUHD
           git submodule update --init --recursive --remote Tweaks/YTVideoOverlay
           git submodule update --init --recursive --remote Tweaks/YTweaks
-          # Keep these pinned unless you update them together and verify build:
-          # - Tweaks/YouTubeHeader
-          # - Tweaks/YouSlider
           git submodule update --init --recursive
-          echo "Done. Not committing/pushing from Actions."
+
+      - name: Commit & push updated submodule SHAs
+        run: |
+          if git diff --quiet; then
+            echo "No submodule changes to commit."
+            exit 0
+          fi
+
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+          git add .
+          git commit -m "updated submodules"
+          git push
 
       - name: Show submodule status
+        if: always()
         run: git submodule status --recursive
